@@ -1,0 +1,47 @@
+.scroll-stack-scroller {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  overscroll-behavior-x: none;
+  scroll-behavior: smooth;
+  /* Use standard hardware acceleration for all platforms */
+  will-change: scroll-position;
+  /* Remove -webkit-overflow-scrolling (deprecated and sometimes issues on Android/desktop) */
+  /* Remove -webkit-transform for better native scroll consistency */
+}
+  
+  .scroll-stack-inner {
+    padding: 20vh 5rem 50rem;
+    min-height: 100vh;
+  }
+  
+  .scroll-stack-card-wrapper {
+    position: relative;
+  }
+  
+  .scroll-stack-card {
+    transform-origin: top center;
+    will-change: transform, filter;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+    height: 20rem;
+    width: 100%;
+    margin: 30px 0;
+    padding: 3rem;
+    border-radius: 40px;
+    box-sizing: border-box;
+    /* Improve mobile performance */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    position: relative;
+  }
+  
+  .scroll-stack-end {
+    width: 100%;
+    height: 1px;
+  }
+  
