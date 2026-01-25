@@ -1,7 +1,7 @@
 'use client';
 import { useRef } from 'react';
 import { motion } from 'motion/react';
-import { SiMongodb, SiExpress, SiReact, SiNodedotjs } from "react-icons/si";
+import { SiMongodb, SiReact, SiNodedotjs } from "react-icons/si";
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../utils/translations';
 
@@ -46,7 +46,7 @@ const WhatICanDo = () => {
     },
     {
       title: 'Express.js',
-      icon: SiExpress,
+      icon: SiNodedotjs,
       capabilities: t.express
     },
     {

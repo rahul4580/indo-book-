@@ -5,7 +5,8 @@ import { motion, useScroll, useTransform } from 'motion/react';
 import { useLanguage } from '../../context/LanguageContext';
 import { translations } from '../../utils/translations';
 import Navbar from '../../components/Navbar';
-import { FaLaptopCode, FaGlobeAsia, FaRocket, FaDatabase, FaAnchor } from 'react-icons/fa';
+import Link from 'next/link';
+import { FaLaptopCode, FaGlobe, FaRocket, FaDatabase, FaAnchor } from 'react-icons/fa';
 
 const BentoCard = ({ children, className, delay = 0 }) => (
   <motion.div
@@ -90,7 +91,7 @@ export default function About() {
           {/* Language / Global Mindset */}
           <BentoCard className="flex flex-col justify-center items-center text-center bg-gray-50 dark:bg-neutral-800/50" delay={0.2}>
             <div className="w-20 h-20 rounded-full bg-white dark:bg-black border border-gray-200 dark:border-neutral-700 flex items-center justify-center mb-6 shadow-lg">
-              <FaGlobeAsia className="text-3xl" />
+              <FaGlobe className="text-3xl" />
             </div>
             <h3 className={`text-xl font-bold mb-2 ${language === 'jp' ? 'font-noto' : ''}`}>{t.language.title}</h3>
             <span className="inline-block px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full text-xs font-bold mb-2">
@@ -170,9 +171,9 @@ export default function About() {
           whileInView={{ opacity: 1 }}
           className="text-center mt-32"
         >
-          <a href="/#contact" className={`inline-block px-10 py-4 bg-black text-white dark:bg-white dark:text-black font-bold rounded-full hover:scale-105 transition-transform duration-300 ${language === 'jp' ? 'font-noto' : ''}`}>
+          <Link href="/#contact" className={`inline-block px-10 py-4 bg-black text-white dark:bg-white dark:text-black font-bold rounded-full hover:scale-105 transition-transform duration-300 ${language === 'jp' ? 'font-noto' : ''}`}>
             {t.cta}
-          </a>
+          </Link>
         </motion.div>
 
       </div>
