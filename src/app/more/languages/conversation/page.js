@@ -89,7 +89,7 @@ export default function ConversationPage() {
       }
 
       setInputText('');
-      setSelectedFile(null);
+      removeSelectedFile();
       fetchMessages();
       inputRef.current?.focus();
     } catch (error) {
@@ -103,9 +103,9 @@ export default function ConversationPage() {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        setError('File too large. Max size is 5MB.');
+      // Check file size (3MB limit)
+      if (file.size > 3 * 1024 * 1024) {
+        setError('File too large. Max size is 3MB.');
         return;
       }
 
@@ -264,28 +264,32 @@ export default function ConversationPage() {
                             {/* File Display */}
                             {msg.fileUrl && (
                               <div className="mt-2">
-                                {msg.fileType === 'image' ? (
+                                {msg.fileKind === 'image' || (msg.fileType && msg.fileType.startsWith('image/')) ? (
                                   <div className="relative max-w-xs">
                                     <Image 
                                       src={msg.fileUrl} 
                                       alt={msg.fileName || 'Image'} 
                                       width={300}
                                       height={200}
+                                      unoptimized
                                       className="rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
                                       onClick={() => window.open(msg.fileUrl, '_blank')}
                                     />
                                   </div>
                                 ) : (
-                                  <div 
+                                  <a
+                                    href={msg.fileUrl}
+                                    download={msg.fileName || undefined}
+                                    target="_blank"
+                                    rel="noreferrer"
                                     className="flex items-center gap-2 p-2 bg-black/10 dark:bg-white/10 rounded-lg cursor-pointer hover:bg-black/20 dark:hover:bg-white/20 transition-colors"
-                                    onClick={() => window.open(msg.fileUrl, '_blank')}
                                   >
                                     {getFileIcon(msg.fileType)}
                                     <div className="flex-1 min-w-0">
                                       <div className="text-xs font-medium truncate">{msg.fileName}</div>
                                       <div className="text-xs opacity-70">Click to open</div>
                                     </div>
-                                  </div>
+                                  </a>
                                 )}
                               </div>
                             )}

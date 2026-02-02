@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+
+export const runtime = 'nodejs';
 
 // Global variable to store chat history in memory
 // NOTE: This clears when the server restarts. For production, use a database (Redis/Postgres).
@@ -26,8 +26,10 @@ export async function POST(request) {
     if (contentType && contentType.includes('multipart/form-data')) {
       // Handle file upload
       const formData = await request.formData();
-      const user = formData.get('user');
-      const text = formData.get('text') || '';
+      const userValue = formData.get('user');
+      const textValue = formData.get('text');
+      const user = typeof userValue === 'string' ? userValue : '';
+      const text = typeof textValue === 'string' ? textValue : '';
       const file = formData.get('file');
       
       if (!user) {
@@ -36,43 +38,40 @@ export async function POST(request) {
 
       let fileUrl = null;
       let fileType = null;
+      let fileKind = null;
 
-      if (file) {
-        // Validate file
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        
-        // Check file size (5MB limit)
-        if (buffer.length > 5 * 1024 * 1024) {
-          return NextResponse.json({ error: 'File too large. Max size is 5MB.' }, { status: 400 });
+      const isFileLike =
+        file &&
+        typeof file === 'object' &&
+        typeof file.arrayBuffer === 'function' &&
+        typeof file.type === 'string';
+
+      if (isFileLike) {
+        const MAX_BYTES = 3 * 1024 * 1024;
+
+        // Validate file size
+        if (typeof file.size === 'number' && file.size > MAX_BYTES) {
+          return NextResponse.json({ error: 'File too large. Max size is 3MB.' }, { status: 400 });
         }
 
-        // Check file type
+        // Validate file type
         const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 'text/plain'];
         if (!allowedTypes.includes(file.type)) {
           return NextResponse.json({ error: 'Invalid file type. Only images, PDFs, and text files are allowed.' }, { status: 400 });
         }
 
-        // Generate unique filename
-        const timestamp = Date.now();
-        const randomString = Math.random().toString(36).substring(2);
-        const extension = path.extname(file.name);
-        const filename = `${timestamp}-${randomString}${extension}`;
-        
-        // Ensure uploads directory exists
-        const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-        try {
-          await mkdir(uploadsDir, { recursive: true });
-        } catch (error) {
-          // Directory might already exist
+        // IMPORTANT: Don’t write files to disk. Many deploy targets are serverless/readonly.
+        // Store as a data URL in memory (chatHistory) for demo purposes.
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        if (buffer.length > MAX_BYTES) {
+          return NextResponse.json({ error: 'File too large. Max size is 3MB.' }, { status: 400 });
         }
 
-        // Save file
-        const filepath = path.join(uploadsDir, filename);
-        await writeFile(filepath, buffer);
-        
-        fileUrl = `/uploads/${filename}`;
-        fileType = file.type.startsWith('image/') ? 'image' : 'file';
+        const base64 = buffer.toString('base64');
+        fileUrl = `data:${file.type};base64,${base64}`;
+        fileType = file.type;
+        fileKind = file.type.startsWith('image/') ? 'image' : 'file';
       }
 
       const newMessage = {
@@ -83,7 +82,8 @@ export async function POST(request) {
         isSystem: false,
         fileUrl: fileUrl,
         fileType: fileType,
-        fileName: file?.name || null,
+        fileKind: fileKind,
+        fileName: isFileLike && typeof file.name === 'string' ? file.name : null,
       };
 
       chatHistory.push(newMessage);
