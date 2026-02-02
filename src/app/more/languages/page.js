@@ -109,7 +109,7 @@ export default function Languages() {
                 { label: 'Grammar', href: '/more/languages/grammar' },
                 { label: 'Vocabulary', href: '/more/languages/vocabulary' },
                 { label: 'Listening', href: '/more/languages/listening' },
-                { label: 'JLPT Prep', href: '/more/languages/jlpt-prep' },
+                { label: 'Stories / Reading', href: '/more/languages/jlpt-prep' },
                 { label: 'Anime & Manga', href: '/more/languages/anime-manga' },
                 { label: 'Conversation', href: '/more/languages/conversation' },
               ].map((item) => (
